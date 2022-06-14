@@ -7,6 +7,8 @@ namespace LineAdjustment
 {
     public class LineAdjustmentAlgorithm
     {
+        private const char separator = ' ';
+
         public string Transform(string input, int lineWidth)
         {
             if (string.IsNullOrEmpty(input))
@@ -14,113 +16,99 @@ namespace LineAdjustment
                 return string.Empty;
             }
 
-            var arStr = new ReadOnlySpan<string>(input.Split(' '));
-            var resultStr = new StringBuilder(capacity: lineWidth);
+            var arStr = new ReadOnlySpan<string>(input.Split(separator));
 
             if (arStr.Length == 1)
             {
+                var resultStr = new StringBuilder(capacity: lineWidth);
                 resultStr.Append(arStr[0]);
-                for (int i = 0; i < (lineWidth - arStr[0].Length); i++)
-                {
-                    resultStr.Append(' ');
-                }
+                var numbersOfSpaces = lineWidth - arStr[0].Length;
+
+                AddSeparator(resultStr, numbersOfSpaces);
+
                 return resultStr.ToString();
             }
 
             var resultList = new List<string>(capacity: arStr.Length);
-            var currentStrArray = new List<string>();
+            var buffer = new List<string>();
             foreach (var item in arStr)
             {
-                string v1 = string.Join(" ", currentStrArray);
-                int currentStrlen = v1.Length;
+                int currentStrlen = string.Join(separator, buffer).Length;
                 var sumLength = currentStrlen + item.Length;
 
                 if (sumLength >= lineWidth)
                 {
-                    int v = (lineWidth - currentStrlen);
+                    int numbersOfSpaces = (lineWidth - currentStrlen);
 
-                    if (currentStrArray.Count == 1)
+                    if (buffer.Count == 1)
                     {
-                        var word = new StringBuilder(currentStrArray[0]);
+                        var word = new StringBuilder(buffer[0]);
 
-                        for (int j = 0; j < v; j++)
-                        {
-                            word.Append(' ');
-                        }
+                        AddSeparator(word, numbersOfSpaces);
 
-                        currentStrArray[0] = word.ToString();
+                        buffer[0] = word.ToString();
+                        var str = String.Join("", buffer);
+                        resultList.Add(str);
                     }
                     else
                     {
-                        for (int i = 0; i < currentStrArray.Count; i++)
-                        {
-                            var word = new StringBuilder(currentStrArray[i]);
-                            if (i == 0)
-                            {
-                                for (int j = 0; j <= v; j++)
-                                {
-                                    word.Append(' ');
-                                }
+                        WorkerWords(buffer, numbersOfSpaces);
 
-                                currentStrArray[0] = word.ToString();
-                                continue;
-                            }
-
-                            currentStrArray[i] = word.Append(' ').ToString();
-                        }
-                    }
-
-                    var str = String.Join("", currentStrArray);
-
-                    if (currentStrArray.Count != 1)
-                    {
+                        var str = String.Join("", buffer);
                         str = str.TrimEnd();
+                        resultList.Add(str);
                     }
 
-                    System.Diagnostics.Debug.Write(str);
-                    System.Diagnostics.Debug.WriteLine(str.Length);
-
-                    resultList.Add(str);
-
-                    currentStrArray.Clear();
-                    currentStrArray.Add(item);
+                    buffer.Clear();
+                    buffer.Add(item);
                 }
                 else
                 {
-                    currentStrArray.Add(item);
+                    buffer.Add(item);
                 }
             }
 
-            System.Diagnostics.Debug.Write(currentStrArray.Last());
-
-            if (currentStrArray.Any())
+            if (buffer.Any())
             {
-                string v1 = string.Join(" ", currentStrArray);
-                int currentStrlen = v1.Length;
-                int v = (lineWidth - currentStrlen);
+                int currentStrlen = string.Join(separator, buffer).Length;
+                int numbersOfSpaces = (lineWidth - currentStrlen);
 
-                for (int i = 0; i < currentStrArray.Count; i++)
-                {
-                    var word = new StringBuilder(currentStrArray[i]);
-                    if (i == 0)
-                    {
-                        for (int j = 0; j < v; j++)
-                        {
-                            word.Append(' ');
-                        }
+                //since there is no hyphen at the end
+                WorkerWords(buffer, numbersOfSpaces - 1);
 
-                        currentStrArray[0] = word.ToString();
-                        continue;
-                    }
-
-                    currentStrArray[i] = word.Append(' ').ToString();
-                }
-
-                var str = String.Join("", currentStrArray);
+                var str = String.Join("", buffer);
                 resultList.Add(str);
             }
 
             return String.Join("\n", resultList);
+        }
+
+        private static void WorkerWords(List<string> currentStrArray, int v)
+        {
+            for (int i = 0; i < currentStrArray.Count; i++)
+            {
+                var word = new StringBuilder(currentStrArray[i]);
+                if (i == 0)
+                {
+                    for (int j = 0; j <= v; j++)
+                    {
+                        word.Append(separator);
+                    }
+
+                    currentStrArray[0] = word.ToString();
+                    continue;
+                }
+
+                currentStrArray[i] = word.Append(separator).ToString();
+            }
+        }
+
+        private static void AddSeparator(StringBuilder resultStr, int v)
+        {
+            for (int i = 0; i < v; i++)
+            {
+                resultStr.Append(separator);
+            }
         }
     }
 }
