@@ -1,29 +1,19 @@
-# Foobar
+# Задача
 
-Foobar is a Python library for dealing with word pluralization.
+Написать алгоритм, принимающий на вход строку разделенную пробелами, и длину строки в символах.
+Необходимо разбить исходный текст на строки и выравнять по указанной длине строки с помощью пробелов.
+Расстояние между словами нужно заполнять равным количеством пробелов, если же это не возможно, то добавляем
+еще по пробелу между словами слева направо. Если в строке помещается только 1 слово, то дополнить строку 
+пробелами справа Результат вернуть в виде единой строки, где полученный список равных по ширине строк склеен 
+с помощью символа перевода строки.
 
-## Installation
+## Установка
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Запускаем тесты
 
-```bash
-pip install foobar
-```
+## Результат
 
-## Usage
-
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
